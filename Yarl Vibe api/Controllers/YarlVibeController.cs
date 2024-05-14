@@ -18,7 +18,7 @@ namespace Yarl_Vibe_api.Controllers
         [HttpGet]
         [Route("GetData")]
         public JsonResult GetData() {
-            string query = "select * from tbl_KitchenStaff";
+            string query = "select * from tbl_Table";
             DataTable table = new DataTable();
             string sqlDatasource= _configuration.GetConnectionString("yarlVibeDBCon");
             SqlDataReader myReader;
