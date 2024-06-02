@@ -53,7 +53,7 @@ app.MapControllers();
 using (var scope = app.Services.CreateScope())
 {
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-    var roles = new[] { "Admin", "Manager", "Member" };
+    var roles = new[] { "Admin", "KitchenStaff", "Waiter", "Cashier" };
 
     foreach (var role in roles)
     {
@@ -65,10 +65,10 @@ using (var scope = app.Services.CreateScope())
 using (var scope = app.Services.CreateScope())
 {
     var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
-    var userNames = new[] { "admin1", "admin2", "member1" };
-    var emails = new[] { "admin1@gmail.com", "admin2@gmail.com", "member1@gmail.com" };
-    var passwords = new[] { "@Admin1test", "@Admin2test", "@member1test" };
-    var roles = new[] { "Admin", "Admin", "Member" };
+    var userNames = new[] { "admin1", "kitchenStaff1", "waiter1", "cashier1" };
+    var emails = new[] { "admin1@gmail.com", "kitchenStaff1@gmail.com", "waiter1@gmail.com" , "cashier1@gmail.com" };
+    var passwords = new[] { "@Admin1test", "@kitchenStaff1test", "@waiter1test", "@cashier1test" };
+    var roles = new[] { "Admin", "KitchenStaff", "Waiter", "Cashier" };
 
     for (int i = 0; i < userNames.Length; i++)
     {
