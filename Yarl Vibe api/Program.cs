@@ -32,6 +32,14 @@ builder.Services.AddControllers().AddNewtonsoftJson(options =>
 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore).AddNewtonsoftJson(
     options=>options.SerializerSettings.ContractResolver=new DefaultContractResolver());
 
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("Admin", policy => policy.RequireRole("Admin"));
+    options.AddPolicy("KitchenStaff", policy => policy.RequireRole("KitchenStaff"));
+    options.AddPolicy("Waiter", policy => policy.RequireRole("Waiter"));
+    options.AddPolicy("Cashier", policy => policy.RequireRole("Cashier"));
+});
+
 var app = builder.Build();
 
 //Enable CORS
