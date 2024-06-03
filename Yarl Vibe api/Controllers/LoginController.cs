@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Yarl_Vibe_api.Models;
@@ -33,10 +34,26 @@ namespace Yarl_Vibe_api.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest("Something went wrong, Please try again " + ex.Message);
+                return BadRequest("Something went wrong, Please try again. " + ex.Message);
             }
 
-            return Ok(message);
+            return Ok(new { message = message });
+        }
+
+        [HttpGet("logout"), Authorize]
+        public async Task<ActionResult> LogoutUser()
+        {
+            string message = "You are free to go!";
+            try
+            {
+                await signInManager.SignOutAsync();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("Something went wrong, please try again. " + ex.Message);
+            }
+
+            return Ok(new { message = message });
         }
     }
 }
