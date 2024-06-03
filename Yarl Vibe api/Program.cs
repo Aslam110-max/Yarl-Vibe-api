@@ -14,8 +14,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("yarlVibeDBCon"));
 });
 
-builder.Services.AddIdentityApiEndpoints<IdentityUser>()
-    .AddEntityFrameworkStores<ApplicationDbContext>();
+//builder.Services.AddIdentityApiEndpoints<IdentityUser>()
+//    .AddEntityFrameworkStores<ApplicationDbContext>();
 
 builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
 {
@@ -83,7 +83,7 @@ using (var scope = app.Services.CreateScope())
             var result = await userManager.CreateAsync(user, passwords[i]);
             if (result.Succeeded)
             {
-                await userManager.AddToRoleAsync(user, roles[i]);
+                await userManager.AddToRoleAsync(user, userRoles[i]);
             }
         }
     }
