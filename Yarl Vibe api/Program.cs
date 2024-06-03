@@ -14,10 +14,10 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("yarlVibeDBCon"));
 });
 
-builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+builder.Services.AddIdentityApiEndpoints<IdentityUser>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
-builder.Services.AddIdentityCore<IdentityUser>(options =>
+builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
 {
     options.SignIn.RequireConfirmedEmail = false;
     options.User.RequireUniqueEmail = true;
@@ -61,22 +61,19 @@ app.MapControllers();
 using (var scope = app.Services.CreateScope())
 {
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
+
     var roles = new[] { "Admin", "KitchenStaff", "Waiter", "Cashier" };
+    var userNames = new[] { "admin1", "kitchenStaff1", "waiter1", "cashier1" };
+    var emails = new[] { "admin1@gmail.com", "kitchenStaff1@gmail.com", "waiter1@gmail.com", "cashier1@gmail.com" };
+    var passwords = new[] { "@Admin1test", "@kitchenStaff1test", "@waiter1test", "@cashier1test" };
+    var userRoles = new[] { "Admin", "KitchenStaff", "Waiter", "Cashier" };
 
     foreach (var role in roles)
     {
         if (!await roleManager.RoleExistsAsync(role))
             await roleManager.CreateAsync(new IdentityRole(role));
     }
-}
-
-using (var scope = app.Services.CreateScope())
-{
-    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
-    var userNames = new[] { "admin1", "kitchenStaff1", "waiter1", "cashier1" };
-    var emails = new[] { "admin1@gmail.com", "kitchenStaff1@gmail.com", "waiter1@gmail.com" , "cashier1@gmail.com" };
-    var passwords = new[] { "@Admin1test", "@kitchenStaff1test", "@waiter1test", "@cashier1test" };
-    var roles = new[] { "Admin", "KitchenStaff", "Waiter", "Cashier" };
 
     for (int i = 0; i < userNames.Length; i++)
     {
@@ -91,6 +88,5 @@ using (var scope = app.Services.CreateScope())
         }
     }
 }
-
 
 app.Run();
