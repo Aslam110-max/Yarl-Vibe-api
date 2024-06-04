@@ -1,50 +1,59 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System.Data.SqlClient;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Yarl_Vibe_api.Models;
 
-namespace Yarl_Vibe_api.Controllers.LoginController
+namespace Yarl_Vibe_api.Controllers
 {
-    public class LoginController : Controller
+    [Route("api/[controller]")]
+    [ApiController]
+    public class LoginController(SignInManager<IdentityUser> sm, UserManager<IdentityUser> um) : ControllerBase
     {
-        private readonly string _connectionString;
+        private readonly SignInManager<IdentityUser> signInManager = sm;
+        private readonly UserManager<IdentityUser> userManager = um;
 
-        public LoginController(IConfiguration configuration)
-        {
-            _connectionString = configuration.GetConnectionString("yarlVibeDBCon");
-        }
         [HttpPost("login")]
-        public IActionResult Login([FromBody] LoginRequest request)
+        public async Task<ActionResult> LoginUser(Login login)
         {
-            string query = "SELECT UserID, UserRole FROM Users WHERE Username = @username AND PasswordHash = @passwordHash";
+            string message = "";
 
-            using (SqlConnection connection = new SqlConnection(_connectionString))
+            try
             {
-                connection.Open();
-                using (SqlCommand command = new SqlCommand(query, connection))
-                {
-                    command.Parameters.AddWithValue("@username", request.Username);
-                    command.Parameters.AddWithValue("@passwordHash", request.PasswordHash);
+                IdentityUser user_ = await userManager.FindByNameAsync(login.Username);
 
-                    using (SqlDataReader reader = command.ExecuteReader())
-                    {
-                        if (reader.Read())
-                        {
-                            int userId = reader.GetInt32(0);
-                            string userRole = reader.GetString(1);
-                            return Ok(new { UserId = userId, UserRole = userRole });
-                        }
-                        else
-                        {
-                            return Unauthorized("Invalid username or password");
-                        }
-                    }
+                var result = await signInManager.PasswordSignInAsync(user_, login.Password, login.Remember, false);
+
+                if (!result.Succeeded)
+                {
+                    return Unauthorized("Check your login credential and try again");
                 }
+
+                message = "Login successfully";
+
             }
+            catch (Exception ex)
+            {
+                return BadRequest("Something went wrong, Please try again. " + ex.Message);
+            }
+
+            return Ok(new { message = message });
+        }
+
+        [HttpGet("logout"), Authorize]
+        public async Task<ActionResult> LogoutUser()
+        {
+            string message = "You are free to go!";
+            try
+            {
+                await signInManager.SignOutAsync();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("Something went wrong, please try again. " + ex.Message);
+            }
+
+            return Ok(new { message = message });
         }
     }
-
-public class LoginRequest
-{
-    public string Username { get; set; }
-    public string PasswordHash { get; set; }
-}
 }
