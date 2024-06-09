@@ -54,7 +54,6 @@ namespace Yarl_Vibe_api.Controllers
                     table.Load(myReader);
                     myReader.Close();
                     myCon.Close();
-                    //chnageddd
                 }
             }
             return new JsonResult("Added Successfully!");
