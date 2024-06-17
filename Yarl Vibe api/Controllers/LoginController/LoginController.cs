@@ -42,6 +42,7 @@ namespace Yarl_Vibe_api.Controllers
         }
 
         [HttpGet("logout"), Authorize]
+        [AllowAnonymous]
         public async Task<ActionResult> LogoutUser()
         {
             string message = "You are free to go!";
