@@ -11,7 +11,7 @@ builder.Services.AddControllers();
 builder.Services.AddAuthentication();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
-    options.UseSqlServer(builder.Configuration.GetConnectionString("yarlVibeDBCon"));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("yarlVibeDBCon2"));
 });
 
 //builder.Services.AddIdentityApiEndpoints<IdentityUser>()

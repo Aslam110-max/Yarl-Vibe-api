@@ -2,11 +2,12 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using Yarl_Vibe_api.Models;
 
 namespace Yarl_Vibe_api.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class LoginController(SignInManager<IdentityUser> sm, UserManager<IdentityUser> um) : ControllerBase
     {
@@ -41,6 +42,7 @@ namespace Yarl_Vibe_api.Controllers
         }
 
         [HttpGet("logout"), Authorize]
+        [AllowAnonymous]
         public async Task<ActionResult> LogoutUser()
         {
             string message = "You are free to go!";
@@ -54,6 +56,33 @@ namespace Yarl_Vibe_api.Controllers
             }
 
             return Ok(new { message = message });
+        }
+
+        [HttpGet("getUser"), Authorize]
+        public async Task<ActionResult> GetUser()
+        {
+            string message = "Logged in";
+            IdentityUser currentUser = new();
+
+            try
+            {
+                var user = HttpContext.User;
+                var principal = new ClaimsPrincipal(user);
+                var result = signInManager.IsSignedIn(principal);
+                if (result)
+                {
+                    currentUser = await signInManager.UserManager.GetUserAsync(principal);
+                }
+                else
+                {
+                    return Forbid("Access Denied");
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("Something went wrong please try again. " + ex.Message);
+            }
+            return Ok(new { message = message, user = currentUser });
         }
     }
 }
