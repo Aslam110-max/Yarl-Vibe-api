@@ -2,9 +2,11 @@
 using System.Data.SqlClient;
 using System.Data;
 using Newtonsoft.Json.Linq;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Yarl_Vibe_api.Controllers.KitchenStaffController
 {
+    [Authorize(Policy = "KitchenStaff")]
     public class KitchenStaffController : Controller
     {
         private IConfiguration _configuration;
