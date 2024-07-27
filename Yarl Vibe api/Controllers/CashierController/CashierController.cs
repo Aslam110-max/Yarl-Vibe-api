@@ -2,11 +2,9 @@
 using System.Data.SqlClient;
 using System.Data;
 using Newtonsoft.Json.Linq;
-using Microsoft.AspNetCore.Authorization;
 
 namespace Yarl_Vibe_api.Controllers.CashierController
 {
-    [Authorize(Policy = "Cashier")]
     public class CashierController : Controller
     {
         private IConfiguration _configuration;
