@@ -36,6 +36,42 @@ namespace Yarl_Vibe_api.Controllers.KitchenStaffController
             }
             return new JsonResult(table);
         }
+
+        [HttpGet]
+        [Route("GetOrderStatus/{orderId}")]
+        public JsonResult GetOrderStatus(int orderId)
+        {
+            // Define the query to retrieve OrderID and FoodStatus for the specific order
+            string query = "SELECT OrderID, FoodStatus FROM Orders WHERE OrderID = @orderID";
+
+            // Create a DataTable to hold the results
+            DataTable table = new DataTable();
+
+            // Get the connection string from the configuration
+            string sqlDatasource = _configuration.GetConnectionString("yarlVibeDBCon");
+
+            using (SqlConnection myCon = new SqlConnection(sqlDatasource))
+            {
+                // Open the connection
+                myCon.Open();
+
+                using (SqlCommand myCommand = new SqlCommand(query, myCon))
+                {
+                    // Add the OrderID parameter to the query
+                    myCommand.Parameters.AddWithValue("@OrderID", orderId);
+
+                    // Execute the query and load the results into the DataTable
+                    using (SqlDataReader myReader = myCommand.ExecuteReader())
+                    {
+                        table.Load(myReader);
+                    }
+                }
+            }
+
+            // Return the result as a JSON object
+            return new JsonResult(table);
+        }
+
         //Update order status
 
         [HttpPost]
