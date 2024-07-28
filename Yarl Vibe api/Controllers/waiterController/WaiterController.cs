@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace Yarl_Vibe_api.Controllers.waiterController
 {
-    [Authorize(Policy = "Waiter")]
     public class WaiterController : Controller
     {
         private IConfiguration _configuration;
